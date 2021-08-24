@@ -1,4 +1,4 @@
-package br.com.zup.polyana.propostas.validation;
+package br.com.zup.polyana.propostas.config.validation;
 
 import java.util.ArrayList;
 import java.util.List;

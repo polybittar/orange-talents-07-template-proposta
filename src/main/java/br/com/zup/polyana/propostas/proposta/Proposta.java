@@ -51,10 +51,6 @@ public class Proposta {
         this.salario = salario;
     }
 
-    public boolean existeProposta(PropostaRepository propostaRepository) {
-        return propostaRepository.findByDocumento(documento).isPresent();
-    }
-
     public Long getId() {
         return id;
     }
