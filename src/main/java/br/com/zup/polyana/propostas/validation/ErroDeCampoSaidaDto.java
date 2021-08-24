@@ -1,4 +1,4 @@
-package br.com.zup.polyana.propostas.config.validation;
+package br.com.zup.polyana.propostas.validation;
 
 public class ErroDeCampoSaidaDto {
         private String field;
