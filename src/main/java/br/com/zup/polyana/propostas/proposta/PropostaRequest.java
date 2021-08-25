@@ -58,7 +58,7 @@ public class PropostaRequest {
         return salario;
     }
 
-    public Proposta converter() {
-        return new Proposta(documento, email, nome, endereco, salario);
+    public Proposta converter(EstadoProposta estadoProposta) {
+        return new Proposta(documento, email, nome, endereco, salario, estadoProposta);
     }
 }

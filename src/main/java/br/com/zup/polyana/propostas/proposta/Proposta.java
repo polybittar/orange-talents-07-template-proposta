@@ -37,25 +37,54 @@ public class Proposta {
     @NotNull
     private BigDecimal salario;
 
+    @Enumerated
+    @Column(nullable=false)
+    private EstadoProposta estadoProposta;
+
     @Deprecated
     public Proposta() {
 
     }
 
     public Proposta(@NotBlank String documento, @Email @NotBlank String email, @NotBlank String nome,
-                    @NotBlank String endereco, @Positive BigDecimal salario) {
+                    @NotBlank String endereco, @Positive BigDecimal salario, EstadoProposta estadoProposta) {
         this.documento = documento;
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+        this.estadoProposta = estadoProposta;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public EstadoProposta getEstadoProposta() {
+        return estadoProposta;
     }
 
     public boolean existeProposta(PropostaRepository propostaRepository) {
         return propostaRepository.findByDocumento(documento).isPresent();
     }
 
-    public Long getId() {
-        return id;
+    public void atualizaEstado(RestricaoAnalise restricaoAnalise, PropostaRepository repository) {
+        this.estadoProposta =
+                restricaoAnalise==RestricaoAnalise.COM_RESTRICAO?
+                        estadoProposta.NAO_ELEGIVEL:estadoProposta.ELEGIVEL;
+        repository.save(this);          //salva o novo estado da proposta após análise
+
+    }
+
+    public SolicitacaoAnaliseResponse executaAnalise(SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise) {
+        return encaminhaSolicitacaoAnalise.enviaSolicitacaoAnalise(new SolicitacaoAnaliseRequest(this));
     }
 }

@@ -1,6 +1,7 @@
 package br.com.zup.polyana.propostas.proposta;
 
 
+import feign.FeignException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,25 +16,46 @@ import java.util.Optional;
 public class PropostaController {
 
     private PropostaRepository propostaRepository;
+    private SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise;
 
-    public PropostaController(PropostaRepository propostaRepository) {
+    public PropostaController(PropostaRepository propostaRepository, SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise) {
         this.propostaRepository = propostaRepository;
+        this.encaminhaSolicitacaoAnalise = encaminhaSolicitacaoAnalise;
     }
 
     @PostMapping
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder){
 
-        Proposta proposta = propostaRequest.converter();
+        //começa como não elegível antes da verificação
+        Proposta proposta = propostaRequest.converter(EstadoProposta.NAO_ELEGIVEL);
 
+        //confere se já existe uma proposta com o documento e volta 422 caso for verdade
         if (proposta.existeProposta(propostaRepository)){
             return ResponseEntity
                     .unprocessableEntity()
                     .build();
         }
 
+        //salva antes da análise
         propostaRepository.save(proposta);
 
+        try {
+            //tenta atualizar o estado se não houver restrição após análise
+            proposta.atualizaEstado(proposta.executaAnalise(encaminhaSolicitacaoAnalise)
+                            .getResultadoSolicitacao(),
+                    propostaRepository);
+
+        }catch (FeignException.UnprocessableEntity e) {
+            //status 422 se houver restrição
+            proposta.atualizaEstado(
+                    RestricaoAnalise.COM_RESTRICAO,
+                    propostaRepository);
+
+            return ResponseEntity.status(e.status()).build();
+        }
+
+        //retorna 201 com uri caso estiver elegível
         URI uri = uriBuilder.path("/api/proposta/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity
                 .created(uri)
