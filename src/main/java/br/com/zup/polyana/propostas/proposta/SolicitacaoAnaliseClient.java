@@ -10,6 +10,6 @@ import javax.validation.Valid;
 @FeignClient(value = "solicitacao", url = "http://localhost:9999/")
 public interface SolicitacaoAnaliseClient {
 
-    @RequestMapping(method = RequestMethod.POST, value = "/api/solicitacao", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, value = "/api/solicitacao")
     SolicitacaoAnaliseResponse enviaSolicitacaoAnalise(@RequestBody @Valid SolicitacaoAnaliseRequest request);
 }

@@ -12,7 +12,6 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/proposta")
 public class PropostaController {
 
     private PropostaRepository propostaRepository;
@@ -23,7 +22,7 @@ public class PropostaController {
         this.encaminhaSolicitacaoAnalise = encaminhaSolicitacaoAnalise;
     }
 
-    @PostMapping
+    @RequestMapping(method = RequestMethod.POST, value = "/api/proposta")
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder){
 
@@ -62,7 +61,7 @@ public class PropostaController {
                 .body(uri);
     }
 
-    @DeleteMapping("/{id}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/api/proposta/{id}")
     @Transactional
     public ResponseEntity<?> remover(@PathVariable Long id) {
         Optional<Proposta> proposta = propostaRepository.findById(id);

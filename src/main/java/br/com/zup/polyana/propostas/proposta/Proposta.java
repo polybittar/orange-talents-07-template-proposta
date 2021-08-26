@@ -41,6 +41,8 @@ public class Proposta {
     @Column(nullable=false)
     private EstadoProposta estadoProposta;
 
+    private String cartao;
+
     @Deprecated
     public Proposta() {
 
@@ -72,6 +74,10 @@ public class Proposta {
         return estadoProposta;
     }
 
+    public String getCartao() {
+        return cartao;
+    }
+
     public boolean existeProposta(PropostaRepository propostaRepository) {
         return propostaRepository.findByDocumento(documento).isPresent();
     }
@@ -81,10 +87,15 @@ public class Proposta {
                 restricaoAnalise==RestricaoAnalise.COM_RESTRICAO?
                         estadoProposta.NAO_ELEGIVEL:estadoProposta.ELEGIVEL;
         repository.save(this);          //salva o novo estado da proposta após análise
-
     }
 
     public SolicitacaoAnaliseResponse executaAnalise(SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise) {
-        return encaminhaSolicitacaoAnalise.enviaSolicitacaoAnalise(new SolicitacaoAnaliseRequest(this));
+        SolicitacaoAnaliseResponse retornoAnalise = encaminhaSolicitacaoAnalise.
+                enviaSolicitacaoAnalise(new SolicitacaoAnaliseRequest(this));
+        return retornoAnalise;
+    }
+
+    public void associaCartao(String cartao) {
+        this.cartao = cartao;
     }
 }
