@@ -70,6 +70,18 @@ public class Proposta {
         return nome;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public BigDecimal getSalario() {
+        return salario;
+    }
+
     public EstadoProposta getEstadoProposta() {
         return estadoProposta;
     }
@@ -85,7 +97,7 @@ public class Proposta {
     public void atualizaEstado(RestricaoAnalise restricaoAnalise, PropostaRepository repository) {
         this.estadoProposta =
                 restricaoAnalise==RestricaoAnalise.COM_RESTRICAO?
-                        estadoProposta.NAO_ELEGIVEL:estadoProposta.ELEGIVEL;
+                        estadoProposta.NÃO_ELEGÍVEL:estadoProposta.ELEGÍVEL;
         repository.save(this);          //salva o novo estado da proposta após análise
     }
 

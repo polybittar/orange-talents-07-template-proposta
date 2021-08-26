@@ -2,8 +2,10 @@ package br.com.zup.polyana.propostas.proposta;
 
 
 import feign.FeignException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
@@ -27,7 +29,7 @@ public class PropostaController {
     public ResponseEntity<?> cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder){
 
         //começa como não elegível antes da verificação
-        Proposta proposta = propostaRequest.converter(EstadoProposta.NAO_ELEGIVEL);
+        Proposta proposta = propostaRequest.converter(EstadoProposta.NÃO_ELEGÍVEL);
 
         //confere se já existe uma proposta com o documento e volta 422 caso for verdade
         if (proposta.existeProposta(propostaRepository)){
@@ -60,6 +62,21 @@ public class PropostaController {
                 .created(uri)
                 .body(uri);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/api/proposta/{id}")
+    @Transactional
+    public ResponseEntity<?> consultar(@PathVariable Long id) {
+
+        Optional<Proposta> propostaObject = propostaRepository.findById(id);
+        if(propostaObject.isPresent()){
+            Proposta proposta = propostaObject.get();
+            return ResponseEntity.ok(new PropostaResponse(proposta));
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/api/proposta/{id}")
     @Transactional

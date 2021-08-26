@@ -29,7 +29,7 @@ public class AssociaPropostaCartao {
     public void AssociaPropostaECartao()  throws Exception {
 
         Iterable<Proposta> propostasElegiveis =
-                propostaRepository.findByEstadoPropostaAndCartaoIsNull(EstadoProposta.ELEGIVEL);
+                propostaRepository.findByEstadoPropostaAndCartaoIsNull(EstadoProposta.ELEGÍVEL);
 
         propostasElegiveis.forEach(proposta->{
             try {
