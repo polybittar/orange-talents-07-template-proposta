@@ -40,6 +40,7 @@ public class PropostaController {
 
         //salva antes da análise
         propostaRepository.save(proposta);
+        URI uri = uriBuilder.path("/api/proposta/{idProposta}").buildAndExpand(proposta.getIdProposta()).toUri();
 
         try {
             //tenta atualizar o estado se não houver restrição após análise
@@ -53,11 +54,12 @@ public class PropostaController {
                     RestricaoAnalise.COM_RESTRICAO,
                     propostaRepository);
 
-            return ResponseEntity.status(e.status()).build();
+            return ResponseEntity
+                    .status(e.status())
+                    .body(uri);
         }
 
         //retorna 201 com uri caso estiver elegível
-        URI uri = uriBuilder.path("/api/proposta/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity
                 .created(uri)
                 .body(uri);
@@ -65,25 +67,26 @@ public class PropostaController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/proposta/{id}")
     @Transactional
-    public ResponseEntity<?> consultar(@PathVariable Long id) {
+    public ResponseEntity<?> consultar(@PathVariable String id) {
 
-        Optional<Proposta> propostaObject = propostaRepository.findById(id);
-        if(propostaObject.isPresent()){
+        Optional<Proposta> propostaObject = propostaRepository.findByIdProposta(id);
+        if(propostaObject.isPresent()) {
             Proposta proposta = propostaObject.get();
             return ResponseEntity.ok(new PropostaResponse(proposta));
         }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity
+                .notFound()
+                .build();
     }
 
 
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/api/proposta/{id}")
     @Transactional
-    public ResponseEntity<?> remover(@PathVariable Long id) {
-        Optional<Proposta> proposta = propostaRepository.findById(id);
+    public ResponseEntity<?> remover(@PathVariable String id) {
+        Optional<Proposta> proposta = propostaRepository.findByIdProposta(id);
         if(proposta.isPresent()) {
-            propostaRepository.deleteById(id);
+            propostaRepository.deleteByIdProposta(id);
             return ResponseEntity
                     .ok()
                     .build();

@@ -8,4 +8,8 @@ public interface PropostaRepository extends JpaRepository <Proposta,Long> {
     Optional<Proposta> findByDocumento(String documento);
 
     Iterable<Proposta> findByEstadoPropostaAndCartaoIsNull(EstadoProposta estado);
+
+    Optional<Proposta> findByIdProposta(String uuid);
+
+    Optional<Proposta> deleteByIdProposta(String id);
 }

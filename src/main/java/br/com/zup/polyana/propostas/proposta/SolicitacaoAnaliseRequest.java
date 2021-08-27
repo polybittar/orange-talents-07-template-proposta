@@ -14,9 +14,9 @@ public class SolicitacaoAnaliseRequest {
     @NotBlank
     private String nome;
     @NotNull
-    private String idProposta;
+    private Long idProposta;
 
-    public SolicitacaoAnaliseRequest(String nome, String documento, String idProposta) {
+    public SolicitacaoAnaliseRequest(String nome, String documento, Long idProposta) {
         this.nome = nome;
         this.documento = documento;
         this.idProposta = idProposta;
@@ -25,7 +25,7 @@ public class SolicitacaoAnaliseRequest {
     public SolicitacaoAnaliseRequest(Proposta proposta) {
         this.documento = proposta.getDocumento();
         this.nome = proposta.getNome();
-        this.idProposta = proposta.getId().toString();
+        this.idProposta = proposta.getId();
     }
 
     public String getDocumento() {
@@ -36,7 +36,7 @@ public class SolicitacaoAnaliseRequest {
         return nome;
     }
 
-    public String getIdProposta() {
+    public Long getIdProposta() {
         return idProposta;
     }
 

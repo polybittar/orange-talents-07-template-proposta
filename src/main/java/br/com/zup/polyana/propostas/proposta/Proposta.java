@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 public class Proposta {
@@ -43,6 +44,10 @@ public class Proposta {
 
     private String cartao;
 
+    @NotNull
+    @Column(nullable = false, unique = true)
+    private String idProposta;
+
     @Deprecated
     public Proposta() {
 
@@ -56,6 +61,7 @@ public class Proposta {
         this.endereco = endereco;
         this.salario = salario;
         this.estadoProposta = estadoProposta;
+        this.idProposta = UUID.randomUUID().toString();
     }
 
     public Long getId() {
@@ -88,6 +94,10 @@ public class Proposta {
 
     public String getCartao() {
         return cartao;
+    }
+
+    public String getIdProposta() {
+        return idProposta;
     }
 
     public boolean existeProposta(PropostaRepository propostaRepository) {

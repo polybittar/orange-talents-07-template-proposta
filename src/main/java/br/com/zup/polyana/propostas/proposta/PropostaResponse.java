@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class PropostaResponse {
 
-    private Long id;
+    private String id;
     private String nome;
     private String email;
     private String documento;
@@ -13,7 +13,7 @@ public class PropostaResponse {
     private EstadoProposta estadoProposta;
 
     public PropostaResponse(Proposta proposta) {
-        this.id = proposta.getId();
+        this.id = proposta.getIdProposta();
         this.nome = proposta.getNome();
         this.email = proposta.getEmail();
         this.documento = proposta.getDocumento();
@@ -22,7 +22,7 @@ public class PropostaResponse {
         this.estadoProposta = proposta.getEstadoProposta();
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

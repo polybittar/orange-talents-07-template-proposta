@@ -40,7 +40,6 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     //recursos estaticos
     @Override
     public void configure(WebSecurity web) throws Exception {
-
     }
 
 }
