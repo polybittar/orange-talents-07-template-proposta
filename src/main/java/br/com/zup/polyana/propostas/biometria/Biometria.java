@@ -25,7 +25,6 @@ public class Biometria {
     }
 
     public Biometria(LocalDateTime data, @NotNull String fingerprint, Cartao cartao) {
-        super();
         this.data = data;
         this.fingerprint = fingerprint;
         this.cartao = cartao;
