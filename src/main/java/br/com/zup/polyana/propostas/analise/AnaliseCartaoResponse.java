@@ -1,5 +1,6 @@
-package br.com.zup.polyana.propostas.cartao;
+package br.com.zup.polyana.propostas.analise;
 
+import br.com.zup.polyana.propostas.cartao.Cartao;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,7 +13,7 @@ public class AnaliseCartaoResponse {
         this.id = id;
     }
 
-    public String getId() {
-        return id;
+    public Cartao converter() {
+        return new Cartao(this.id);
     }
 }

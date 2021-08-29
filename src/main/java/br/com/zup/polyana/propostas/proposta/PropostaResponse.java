@@ -49,4 +49,5 @@ public class PropostaResponse {
     public String getEstadoProposta() {
         return estadoProposta.toString().replace("_"," ");
     }
+
 }

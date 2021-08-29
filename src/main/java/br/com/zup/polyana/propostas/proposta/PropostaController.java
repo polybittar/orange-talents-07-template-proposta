@@ -1,6 +1,7 @@
 package br.com.zup.polyana.propostas.proposta;
 
 
+import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseClient;
 import feign.FeignException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

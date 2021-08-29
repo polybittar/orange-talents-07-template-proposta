@@ -1,4 +1,6 @@
-package br.com.zup.polyana.propostas.proposta;
+package br.com.zup.polyana.propostas.analise;
+
+import br.com.zup.polyana.propostas.proposta.RestricaoAnalise;
 
 import javax.persistence.Enumerated;
 

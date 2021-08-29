@@ -1,5 +1,6 @@
-package br.com.zup.polyana.propostas.cartao;
+package br.com.zup.polyana.propostas.analise;
 
+import br.com.zup.polyana.propostas.analise.AnaliseCartaoClient;
 import br.com.zup.polyana.propostas.proposta.EstadoProposta;
 import br.com.zup.polyana.propostas.proposta.Proposta;
 import br.com.zup.polyana.propostas.proposta.PropostaRepository;
@@ -36,7 +37,7 @@ public class AssociaPropostaCartao {
 
                 AnaliseCartaoResponse result =
                         analiseCartao.buscaAnaliseCartao(proposta.getId().toString());
-                proposta.associaCartao(result.getId());
+                proposta.associaCartao(result.converter());
                 propostaRepository.save(proposta);
                 logger.info("Cartão associado à proposta com sucesso");
 

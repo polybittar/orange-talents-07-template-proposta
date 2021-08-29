@@ -1,6 +1,11 @@
 package br.com.zup.polyana.propostas.proposta;
 
 
+import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseClient;
+import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseRequest;
+import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseResponse;
+import br.com.zup.polyana.propostas.cartao.Cartao;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -15,35 +20,28 @@ public class Proposta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @NotBlank
     @Column(nullable = false)
     private String documento;
-
     @Email
     @NotBlank
     @Column(nullable = false)
     private String email;
-
     @NotBlank
     @Column(nullable = false)
     private String nome;
-
     @NotBlank
     @Column(nullable = false)
     private String endereco;
-
     @Positive
     @Column(nullable = false)
     @NotNull
     private BigDecimal salario;
-
     @Enumerated
     @Column(nullable=false)
     private EstadoProposta estadoProposta;
-
-    private String cartao;
-
+    @OneToOne(cascade = CascadeType.MERGE)
+    private Cartao cartao;
     @NotNull
     @Column(nullable = false, unique = true)
     private String idProposta;
@@ -92,7 +90,7 @@ public class Proposta {
         return estadoProposta;
     }
 
-    public String getCartao() {
+    public Cartao getCartao() {
         return cartao;
     }
 
@@ -107,7 +105,7 @@ public class Proposta {
     public void atualizaEstado(RestricaoAnalise restricaoAnalise, PropostaRepository repository) {
         this.estadoProposta =
                 restricaoAnalise==RestricaoAnalise.COM_RESTRICAO?
-                        estadoProposta.NÃO_ELEGÍVEL:estadoProposta.ELEGÍVEL;
+                        EstadoProposta.NÃO_ELEGÍVEL:EstadoProposta.ELEGÍVEL;
         repository.save(this);          //salva o novo estado da proposta após análise
     }
 
@@ -117,7 +115,7 @@ public class Proposta {
         return retornoAnalise;
     }
 
-    public void associaCartao(String cartao) {
+    public void associaCartao(Cartao cartao) {
         this.cartao = cartao;
     }
 }
