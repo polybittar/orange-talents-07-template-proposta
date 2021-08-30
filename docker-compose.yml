@@ -6,7 +6,7 @@ services:
     ports:
       - 8081:8080
     environment:
-      URL_DATABASE: jdbc:postgresql://postgres-propostas:5433/propostas
+      URL_DATABASE: jdbc:postgresql://postgres-propostas:5432/propostas
       DB_USER: postgres
       DB_PASSWORD: senha
     depends_on:
@@ -17,7 +17,7 @@ services:
     volumes:
       - postgres-propostas:/var/lib/postgresql/data
     ports:
-      - 5434:5433
+      - 5434:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: senha

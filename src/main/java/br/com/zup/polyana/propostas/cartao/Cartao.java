@@ -22,19 +22,22 @@ public class Cartao {
     @OneToOne(mappedBy = "cartao")
     Proposta proposta;
     @OneToMany(mappedBy = "cartao")
-    private Set<Biometria> biometria = new HashSet<Biometria>();
+    private Set<Biometria> biometria = new HashSet<>();
     @OneToMany(mappedBy = "cartao",cascade = CascadeType.MERGE)
-    private Set<BloqueioCartao> bloqueio = new HashSet<BloqueioCartao>();
-
+    private Set<BloqueioCartao> bloqueio = new HashSet<>();
+    @Column(nullable=false)
+    private EstadoCartao estadoCartao = EstadoCartao.SEM_BLOQUEIO;
 
     @Deprecated
     public Cartao() {
     }
 
-    public Cartao(@NotNull String numero, Proposta proposta, Set<Biometria> biometria) {
+    public Cartao(@NotNull String numero, Proposta proposta, Set<Biometria> biometria, Set<BloqueioCartao> bloqueio, EstadoCartao estadoCartao) {
         this.numero = numero;
         this.proposta = proposta;
         this.biometria = biometria;
+        this.bloqueio = bloqueio;
+        this.estadoCartao = estadoCartao;
     }
 
     public Cartao(String numero) {
@@ -57,12 +60,16 @@ public class Cartao {
         return numero;
     }
 
+    public String getEstadoCartao() {
+        return estadoCartao.toString().replace("_"," ");
+    }
+
     public void verificaBloqueio(String ip, String userAgent) {
 
         if(ip!=null && ip.length()>0 &&
                 userAgent!=null && userAgent.length()>0 &&
                 naoBloqueado()) {
-
+            this.estadoCartao = EstadoCartao.BLOQUEADO;
             this.bloqueio.add(new BloqueioCartao(this, ip, userAgent));
 
         } else if(!naoBloqueado())

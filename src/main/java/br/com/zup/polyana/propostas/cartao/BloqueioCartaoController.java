@@ -45,6 +45,7 @@ public class BloqueioCartaoController {
         String userAgent = request.getHeader("USER-AGENT");
         cartao.verificaBloqueio(ipClient, userAgent);                    //pega o lugar onde foi feita a request (postman)
 
+
         bloqueioCartaoClient.bloqueiaCartao(cartao.getNumero(), Map.of("sistemaResponsavel", "propostas"));
         cartaoRepository.save(cartao);
 
