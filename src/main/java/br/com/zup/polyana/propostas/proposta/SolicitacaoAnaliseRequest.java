@@ -1,6 +1,5 @@
-package br.com.zup.polyana.propostas.analise;
+package br.com.zup.polyana.propostas.proposta;
 
-import br.com.zup.polyana.propostas.proposta.Proposta;
 import br.com.zup.polyana.propostas.validation.CPFOrCNPJ;
 
 import javax.validation.constraints.NotBlank;

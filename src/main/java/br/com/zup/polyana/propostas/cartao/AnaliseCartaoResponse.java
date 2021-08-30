@@ -1,6 +1,5 @@
-package br.com.zup.polyana.propostas.analise;
+package br.com.zup.polyana.propostas.cartao;
 
-import br.com.zup.polyana.propostas.cartao.Cartao;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

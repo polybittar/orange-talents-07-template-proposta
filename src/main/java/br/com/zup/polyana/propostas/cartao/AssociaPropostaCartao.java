@@ -1,6 +1,5 @@
-package br.com.zup.polyana.propostas.analise;
+package br.com.zup.polyana.propostas.cartao;
 
-import br.com.zup.polyana.propostas.analise.AnaliseCartaoClient;
 import br.com.zup.polyana.propostas.proposta.EstadoProposta;
 import br.com.zup.polyana.propostas.proposta.Proposta;
 import br.com.zup.polyana.propostas.proposta.PropostaRepository;

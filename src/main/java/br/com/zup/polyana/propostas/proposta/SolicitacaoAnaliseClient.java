@@ -1,4 +1,4 @@
-package br.com.zup.polyana.propostas.analise;
+package br.com.zup.polyana.propostas.proposta;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;

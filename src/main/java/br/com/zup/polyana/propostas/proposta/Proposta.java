@@ -1,9 +1,6 @@
 package br.com.zup.polyana.propostas.proposta;
 
 
-import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseClient;
-import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseRequest;
-import br.com.zup.polyana.propostas.analise.SolicitacaoAnaliseResponse;
 import br.com.zup.polyana.propostas.cartao.Cartao;
 
 import javax.persistence.*;

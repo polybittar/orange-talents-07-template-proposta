@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -20,6 +21,7 @@ public class BiometriaController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/api/cartao/{id}/biometria")
+    @Transactional
     public ResponseEntity<?> cadastraBiometria(@RequestBody @Valid BiometriaRequest biometriaRequest,
                                                @PathVariable(name = "id") Long id,
                                                UriComponentsBuilder uriBuilder){
