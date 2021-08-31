@@ -1,4 +1,6 @@
-package br.com.zup.polyana.propostas.cartao;
+package br.com.zup.polyana.propostas.bloqueio;
+
+import br.com.zup.polyana.propostas.cartao.Cartao;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

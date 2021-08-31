@@ -1,6 +1,8 @@
 package br.com.zup.polyana.propostas.cartao;
 
 import br.com.zup.polyana.propostas.biometria.Biometria;
+import br.com.zup.polyana.propostas.bloqueio.BloqueioCartao;
+import br.com.zup.polyana.propostas.bloqueio.EstadoCartao;
 import br.com.zup.polyana.propostas.proposta.Proposta;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;

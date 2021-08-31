@@ -1,4 +1,4 @@
-package br.com.zup.polyana.propostas.validation;
+package br.com.zup.polyana.propostas.validation.validator;
 
 import org.hibernate.validator.constraints.CompositionType;
 import org.hibernate.validator.constraints.ConstraintComposition;

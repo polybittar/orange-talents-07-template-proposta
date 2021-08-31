@@ -1,5 +1,8 @@
-package br.com.zup.polyana.propostas.cartao;
+package br.com.zup.polyana.propostas.bloqueio;
 
+import br.com.zup.polyana.propostas.cartao.Cartao;
+import br.com.zup.polyana.propostas.cartao.CartaoRepository;
+import br.com.zup.polyana.propostas.cartao.Client;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +19,13 @@ import java.util.Optional;
 @RestController
 public class BloqueioCartaoController {
 
+    private Client client;
     private BloqueioCartaoClient bloqueioCartaoClient;
     private CartaoRepository cartaoRepository;
 
-    public BloqueioCartaoController(BloqueioCartaoClient bloqueioCartaoClient, CartaoRepository cartaoRepository) {
+    public BloqueioCartaoController(Client client, BloqueioCartaoClient bloqueioCartaoClient,
+                                    CartaoRepository cartaoRepository) {
+        this.client = client;
         this.bloqueioCartaoClient = bloqueioCartaoClient;
         this.cartaoRepository = cartaoRepository;
     }
@@ -30,25 +36,21 @@ public class BloqueioCartaoController {
                                                     Long idCartao,
                                             HttpServletRequest request){
 
-        Optional<Cartao> cartaoProcura = Optional.ofNullable(cartaoRepository.findById(idCartao)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Cartão não encontrado.")));
+        Optional<Cartao> cartaoProcura = cartaoRepository.findById(idCartao);
 
-        Cartao cartao = cartaoProcura.get();
+        if(cartaoProcura.isPresent()) {
 
-        String ipClient = request.getHeader("X-FORWARDED-FOR");         //pega o ip de quem mandou a request
-        if (ipClient == null) {
-            ipClient = request.getRemoteAddr();                           //pega o ip de quem mandou a request
+            Cartao cartao = cartaoProcura.get();
+
+            cartao.verificaBloqueio(client.buscaIpClient(request),
+                    client.buscaUserAgent(request));                    //pega o lugar onde foi feita a request (postman)
+
+
+            bloqueioCartaoClient.bloqueiaCartao(cartao.getNumero(), Map.of("sistemaResponsavel", "propostas"));
+            cartaoRepository.save(cartao);
+            return ResponseEntity.ok().build();
+
         }
-        String userAgent = request.getHeader("USER-AGENT");
-        cartao.verificaBloqueio(ipClient, userAgent);                    //pega o lugar onde foi feita a request (postman)
-
-
-        bloqueioCartaoClient.bloqueiaCartao(cartao.getNumero(), Map.of("sistemaResponsavel", "propostas"));
-        cartaoRepository.save(cartao);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.notFound().build();
     }
 }

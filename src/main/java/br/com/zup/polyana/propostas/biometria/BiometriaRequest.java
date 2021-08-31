@@ -2,7 +2,7 @@ package br.com.zup.polyana.propostas.biometria;
 
 import br.com.zup.polyana.propostas.cartao.Cartao;
 import br.com.zup.polyana.propostas.cartao.CartaoRepository;
-import br.com.zup.polyana.propostas.validation.Base64Valid;
+import br.com.zup.polyana.propostas.validation.validator.Base64Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

@@ -1,6 +1,6 @@
 package br.com.zup.polyana.propostas.proposta;
 
-import br.com.zup.polyana.propostas.validation.CPFOrCNPJ;
+import br.com.zup.polyana.propostas.validation.validator.CPFOrCNPJ;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,6 +15,11 @@ public class SolicitacaoAnaliseRequest {
     private String nome;
     @NotNull
     private Long idProposta;
+
+    @Deprecated
+    public SolicitacaoAnaliseRequest(){
+
+    }
 
     public SolicitacaoAnaliseRequest(String nome, String documento, Long idProposta) {
         this.nome = nome;
