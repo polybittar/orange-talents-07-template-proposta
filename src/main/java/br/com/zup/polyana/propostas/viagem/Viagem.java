@@ -24,7 +24,6 @@ public class Viagem {
     private LocalDateTime instante = LocalDateTime.now();
     @Future
     @NotNull
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate validoAte;
     @NotNull
     @Column(nullable = false)
@@ -42,8 +41,8 @@ public class Viagem {
     }
 
     public Viagem(Cartao cartao, @NotNull String destino,
-                       @Future @NotNull LocalDate validoAte,
-                       @NotNull String ipCliente, @NotNull String userAgent) {
+                  @Future @NotNull LocalDate validoAte,
+                  @NotNull String ipCliente, @NotNull String userAgent) {
         this.cartao = cartao;
         this.destino = destino;
         this.validoAte = validoAte;

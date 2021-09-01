@@ -13,12 +13,11 @@ public class ViagemRequest {
 
     @NotBlank
     private String destino;
-    @JsonFormat(pattern = "dd-MM-yyyy")
     @Future @NotNull
     private LocalDate validoAte;
 
     public ViagemRequest(@NotBlank String destino,
-                           @NotBlank @Future LocalDate validoAte) {
+                         @NotBlank @Future LocalDate validoAte) {
         this.destino = destino;
         this.validoAte = validoAte;
     }
