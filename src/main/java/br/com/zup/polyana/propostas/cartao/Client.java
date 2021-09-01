@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 public class Client {
 
     public String buscaIpClient(HttpServletRequest request) {
-        String ipClient = request.getHeader("X-FORWARDED-FOR");         //pega o ip de quem mandou a request
+        String ipClient = request.getHeader("X-FORWARDED-FOR"); //pega o ip de quem mandou a request
         if (ipClient == null) {
             ipClient = request.getRemoteAddr();                           //pega o ip de quem mandou a request
         }
@@ -16,7 +16,6 @@ public class Client {
     }
 
     public String buscaUserAgent(HttpServletRequest request) {
-        String userAgent = request.getHeader("USER-AGENT");
-        return userAgent;
+        return request.getHeader("USER-AGENT");
     }
 }

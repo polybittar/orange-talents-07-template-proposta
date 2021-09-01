@@ -1,8 +1,7 @@
 package br.com.zup.polyana.propostas.viagem;
 
-
 import br.com.zup.polyana.propostas.cartao.Cartao;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
@@ -25,8 +24,8 @@ public class Viagem {
     private LocalDateTime instante = LocalDateTime.now();
     @Future
     @NotNull
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate dataTerminoViagem;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate validoAte;
     @NotNull
     @Column(nullable = false)
     private String ipCliente;
@@ -43,11 +42,11 @@ public class Viagem {
     }
 
     public Viagem(Cartao cartao, @NotNull String destino,
-                       @Future @NotNull LocalDate dataTerminoViagem,
+                       @Future @NotNull LocalDate validoAte,
                        @NotNull String ipCliente, @NotNull String userAgent) {
         this.cartao = cartao;
         this.destino = destino;
-        this.dataTerminoViagem = dataTerminoViagem;
+        this.validoAte = validoAte;
         this.ipCliente = ipCliente;
         this.userAgent = userAgent;
         this.idViagem = UUID.randomUUID().toString();
@@ -56,4 +55,5 @@ public class Viagem {
     public String getIdViagem() {
         return idViagem;
     }
+
 }

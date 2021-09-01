@@ -12,30 +12,26 @@ import java.time.LocalDate;
 public class ViagemRequest {
 
     @NotBlank
-    private String destinoViagem;
+    private String destino;
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Future @NotNull
-    private LocalDate dataTerminoViagem;
+    private LocalDate validoAte;
 
-    public ViagemRequest() {
-
-    }
-
-    public ViagemRequest(@NotBlank String destinoViagem,
-                           @NotBlank @Future LocalDate dataTerminoViagem) {
-        this.destinoViagem = destinoViagem;
-        this.dataTerminoViagem = dataTerminoViagem;
+    public ViagemRequest(@NotBlank String destino,
+                           @NotBlank @Future LocalDate validoAte) {
+        this.destino = destino;
+        this.validoAte = validoAte;
     }
 
     public Viagem converter(Cartao cartao, String ipClient, String userAgent) {
-        return new Viagem(cartao, destinoViagem, dataTerminoViagem, ipClient, userAgent);
+        return new Viagem(cartao, destino, validoAte, ipClient, userAgent);
     }
 
-    public String getDestinoViagem() {
-        return destinoViagem;
+    public String getDestino() {
+        return destino;
     }
 
-    public LocalDate getDataTerminoViagem() {
-        return dataTerminoViagem;
+    public LocalDate getValidoAte() {
+        return validoAte;
     }
 }
