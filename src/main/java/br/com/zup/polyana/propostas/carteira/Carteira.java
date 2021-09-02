@@ -29,8 +29,8 @@ public class Carteira {
         this.cartao = cartao;
     }
 
-    public TipoCarteira getTipoCarteira() {
-        return tipoCarteira;
+    public String getTipoCarteira() {
+        return tipoCarteira.toString().replace("_"," ");
     }
 
     public Long getId() {

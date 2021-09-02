@@ -47,7 +47,7 @@ public class CarteiraController {
 
         for (Carteira carteiraEncontrada: carteirasAssociadas) {
 
-            if(carteiraEncontrada.getTipoCarteira() == associaCarteiraCartao.getTipoCarteira()){
+            if(carteiraEncontrada.getTipoCarteira() == associaCarteiraCartao.getTipoCarteira().toString()){
                 return ResponseEntity.unprocessableEntity().build();
             }
         }
