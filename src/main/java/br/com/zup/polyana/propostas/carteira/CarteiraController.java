@@ -36,6 +36,7 @@ public class CarteiraController {
                                            @RequestBody @Valid AssociaCarteiraCartao associaCarteiraCartao,
                                            UriComponentsBuilder uriComponentsBuilder){
 
+
         Optional<Cartao> possivelCartao = cartaoRepository.findByNumero(numeroCartao);
 
         if(possivelCartao.isEmpty()){

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@FeignClient(value = "bloqueioCartao", url = "http://localhost:8888/api/cartoes")
+@FeignClient(value = "bloqueioCartao", url = "${cartoes.host}")
 public interface BloqueioCartaoClient {
 
     @RequestMapping(method = RequestMethod.POST, value = "/{idCartao}/bloqueios", consumes = "application/json")

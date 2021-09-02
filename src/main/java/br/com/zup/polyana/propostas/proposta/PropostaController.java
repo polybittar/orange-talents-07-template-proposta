@@ -2,6 +2,8 @@ package br.com.zup.polyana.propostas.proposta;
 
 
 import feign.FeignException;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,15 +18,24 @@ public class PropostaController {
 
     private PropostaRepository propostaRepository;
     private SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise;
+    private final Tracer tracer;
 
-    public PropostaController(PropostaRepository propostaRepository, SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise) {
+    public PropostaController(PropostaRepository propostaRepository, SolicitacaoAnaliseClient encaminhaSolicitacaoAnalise,
+                              Tracer tracer) {
         this.propostaRepository = propostaRepository;
         this.encaminhaSolicitacaoAnalise = encaminhaSolicitacaoAnalise;
+        this.tracer = tracer;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/api/proposta")
     @Transactional
-    public ResponseEntity<?> cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<?> cadastrar(@RequestBody @Valid PropostaRequest propostaRequest,
+                                       UriComponentsBuilder uriBuilder){
+        Span activeSpan = tracer.activeSpan();
+        activeSpan.setTag("user.email",propostaRequest.getEmail());
+        //activeSpan.setBaggageItem("user.email", propostaRequest.getEmail());
+        //activeSpan.log("Meu log");
+
 
         //começa como não elegível antes da verificação
         Proposta proposta = propostaRequest.converter(EstadoProposta.NÃO_ELEGÍVEL);

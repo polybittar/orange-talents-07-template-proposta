@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "associaCarteira", url = "http://localhost:8888/api/cartoes/")
+@FeignClient(value = "associaCarteira", url = "${cartoes.host}")
 public interface CarteiraCartaoClient {
 
     @RequestMapping(method = RequestMethod.POST,consumes = "application/json",value = "/{idCartao}/carteiras")
