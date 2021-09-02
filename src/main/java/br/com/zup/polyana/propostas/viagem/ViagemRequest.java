@@ -17,7 +17,7 @@ public class ViagemRequest {
     private LocalDate validoAte;
 
     public ViagemRequest(@NotBlank String destino,
-                         @NotBlank @Future LocalDate validoAte) {
+                           @NotBlank @Future LocalDate validoAte) {
         this.destino = destino;
         this.validoAte = validoAte;
     }
