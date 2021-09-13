@@ -1,9 +1,12 @@
 package br.com.zup.polyana.propostas.proposta;
 
 
+import br.com.zup.polyana.propostas.proposta.criptografia.CriptografaDocumento;
+import br.com.zup.polyana.propostas.validation.ApiErrorException;
 import feign.FeignException;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -11,7 +14,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 public class PropostaController {
@@ -36,16 +41,15 @@ public class PropostaController {
         //activeSpan.setBaggageItem("user.email", propostaRequest.getEmail());
         //activeSpan.log("Meu log");
 
+        Optional<Proposta> optionalProposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
+
+        if(documentoExiste(propostaRequest.getDocumento())){
+            throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "Permitida somente uma proposta por pessoa." );
+        }
 
         //começa como não elegível antes da verificação
         Proposta proposta = propostaRequest.converter(EstadoProposta.NÃO_ELEGÍVEL);
 
-        //confere se já existe uma proposta com o documento e volta 422 caso for verdade
-        if (proposta.existeProposta(propostaRepository)){
-            return ResponseEntity
-                    .unprocessableEntity()
-                    .build();
-        }
 
         //salva antes da análise
         propostaRepository.save(proposta);
@@ -63,9 +67,8 @@ public class PropostaController {
                     RestricaoAnalise.COM_RESTRICAO,
                     propostaRepository);
 
-            return ResponseEntity
-                    .status(e.status())
-                    .body(uri);
+            throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "Proposta restrita: " + uri);
+
         }
 
         //retorna 201 com uri caso estiver elegível
@@ -103,5 +106,20 @@ public class PropostaController {
         return ResponseEntity
                 .notFound()
                 .build();
+    }
+
+    private Boolean documentoExiste(String documento){
+        List<Proposta> propostas = propostaRepository.findAll();
+        AtomicReference<Boolean> existe = new AtomicReference<>(false);
+        propostas.forEach(proposta->{
+            String documentoLimpo = CriptografaDocumento.decode(proposta.getDocumento());
+            if(documentoLimpo.equals(documento)){
+                existe.set(true);
+            }else{
+                existe.set(false);
+            }
+        });
+
+        return existe.get();
     }
 }

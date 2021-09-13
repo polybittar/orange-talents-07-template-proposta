@@ -12,4 +12,5 @@ public interface PropostaRepository extends JpaRepository <Proposta,Long> {
     Optional<Proposta> findByIdProposta(String uuid);
 
     Optional<Proposta> deleteByIdProposta(String id);
+
 }

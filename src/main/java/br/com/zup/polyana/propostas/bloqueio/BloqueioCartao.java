@@ -33,4 +33,8 @@ public class BloqueioCartao {
         this.ipCliente = ipCliente;
         this.userAgent = userAgent;
     }
+
+    public Long getId() {
+        return id;
+    }
 }

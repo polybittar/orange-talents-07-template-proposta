@@ -1,8 +1,11 @@
 package br.com.zup.polyana.propostas.carteira;
 
+import br.com.zup.polyana.propostas.cartao.AnaliseCartaoClient;
 import br.com.zup.polyana.propostas.cartao.Cartao;
 import br.com.zup.polyana.propostas.cartao.CartaoRepository;
+import br.com.zup.polyana.propostas.validation.ApiErrorException;
 import feign.FeignException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +17,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -21,44 +25,50 @@ public class CarteiraController {
 
     private CartaoRepository cartaoRepository;
     private CarteiraRepository carteiraRepository;
-    private CarteiraCartaoClient carteiraCartaoClient;
+    private AnaliseCartaoClient analiseCartaoClient;
 
     public CarteiraController(CartaoRepository cartaoRepository, CarteiraRepository carteiraRepository,
-                              CarteiraCartaoClient carteiraCartaoClient) {
+                              AnaliseCartaoClient analiseCartaoClient) {
         this.cartaoRepository = cartaoRepository;
         this.carteiraRepository =carteiraRepository;
-        this.carteiraCartaoClient = carteiraCartaoClient;
+        this.analiseCartaoClient = analiseCartaoClient;
     }
 
-    @RequestMapping("/api/cartao/{numeroCartao}/carteira")
+    @RequestMapping("/api/cartao/carteira/{idCartao}")
     @Transactional
-    public ResponseEntity associarCarteira(@PathVariable String numeroCartao,
+    public ResponseEntity associarCarteira(@PathVariable Long idCartao,
                                            @RequestBody @Valid AssociaCarteiraCartao associaCarteiraCartao,
                                            UriComponentsBuilder uriComponentsBuilder){
 
 
-        Optional<Cartao> possivelCartao = cartaoRepository.findByNumero(numeroCartao);
+        Optional<Cartao> possivelCartao = cartaoRepository.findById(idCartao);
+
 
         if(possivelCartao.isEmpty()){
-            return ResponseEntity.notFound().build();
+            throw new ApiErrorException(HttpStatus.NOT_FOUND, "O cartão não foi encontrado");
         }
 
         Cartao cartao = possivelCartao.get();
-        List<Carteira> carteirasAssociadas = carteiraRepository.findByStatusAndCartaoNumero(StatusCarteira.ASSOCIADA, numeroCartao);
+
+        if(!cartao.naoBloqueado()) {
+            throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "O cartão está bloqueado. Não foi possível cadastrar a carteira");
+        }
+
+        List<Carteira> carteirasAssociadas = carteiraRepository.findByStatusAndCartaoNumero(StatusCarteira.ASSOCIADA, cartao.getNumero());
 
         for (Carteira carteiraEncontrada: carteirasAssociadas) {
 
-            if(carteiraEncontrada.getTipoCarteira() == associaCarteiraCartao.getTipoCarteira().toString()){
-                return ResponseEntity.unprocessableEntity().build();
+            if(Objects.equals(carteiraEncontrada.getTipoCarteira(), associaCarteiraCartao.getTipoCarteira().toString())){
+                    return ResponseEntity.unprocessableEntity().build();
             }
         }
         Carteira carteira = associaCarteiraCartao.converter(cartao);
 
         try{
             CarteiraRequest carteiraRequest = new CarteiraRequest(associaCarteiraCartao.getEmail(), associaCarteiraCartao.getTipoCarteira());
-            carteiraCartaoClient.associaCarteiraDigital(numeroCartao,carteiraRequest);
+            analiseCartaoClient.associaCarteiraDigital(cartao.getNumero(),carteiraRequest);
         } catch (FeignException e){
-            return ResponseEntity.unprocessableEntity().build();
+            throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "Não foi possível cadastrar a carteira");
         }
 
         carteiraRepository.save(carteira);

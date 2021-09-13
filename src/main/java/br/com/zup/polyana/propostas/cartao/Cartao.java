@@ -4,6 +4,7 @@ import br.com.zup.polyana.propostas.biometria.Biometria;
 import br.com.zup.polyana.propostas.bloqueio.BloqueioCartao;
 import br.com.zup.polyana.propostas.bloqueio.EstadoCartao;
 import br.com.zup.polyana.propostas.proposta.Proposta;
+import br.com.zup.polyana.propostas.validation.ApiErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,6 +28,7 @@ public class Cartao {
     private Set<Biometria> biometria = new HashSet<>();
     @OneToMany(mappedBy = "cartao",cascade = CascadeType.MERGE)
     private Set<BloqueioCartao> bloqueio = new HashSet<>();
+    @Enumerated
     @Column(nullable=false)
     private EstadoCartao estadoCartao = EstadoCartao.SEM_BLOQUEIO;
 
@@ -41,6 +43,8 @@ public class Cartao {
         this.bloqueio = bloqueio;
         this.estadoCartao = estadoCartao;
     }
+
+
 
     public Cartao(String numero) {
         this.numero = numero;
@@ -75,14 +79,14 @@ public class Cartao {
             this.bloqueio.add(new BloqueioCartao(this, ip, userAgent));
 
         } else if(!naoBloqueado())
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+            throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Cartão já se encontra bloqueado.");
         else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            throw new ApiErrorException(HttpStatus.BAD_REQUEST,
                     "Dados incorretos");
     }
 
-    private boolean naoBloqueado() {
+    public boolean naoBloqueado() {
         return this.bloqueio.isEmpty();
     }
 }

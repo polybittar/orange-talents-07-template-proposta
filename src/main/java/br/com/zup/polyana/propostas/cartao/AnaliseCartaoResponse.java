@@ -5,11 +5,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AnaliseCartaoResponse {
 
+    @JsonProperty("id")
     private String id;
 
-    @JsonCreator
-    public AnaliseCartaoResponse (@JsonProperty("id") String id) {
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public AnaliseCartaoResponse (String id) {
         this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Cartao converter() {

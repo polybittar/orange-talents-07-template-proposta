@@ -2,7 +2,7 @@ package br.com.zup.polyana.propostas.proposta;
 
 
 import br.com.zup.polyana.propostas.cartao.Cartao;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import br.com.zup.polyana.propostas.proposta.criptografia.CriptografaDocumento;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -49,9 +49,9 @@ public class Proposta {
 
     }
 
-    public Proposta(@NotBlank String documento, @Email @NotBlank String email, @NotBlank String nome,
+    public Proposta(@NotBlank String documento , @Email @NotBlank String email, @NotBlank String nome,
                     @NotBlank String endereco, @Positive BigDecimal salario, EstadoProposta estadoProposta) {
-        this.documento = new BCryptPasswordEncoder().encode(documento);
+        this.documento = documento;
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
@@ -96,9 +96,6 @@ public class Proposta {
         return idProposta;
     }
 
-    public boolean existeProposta(PropostaRepository propostaRepository) {
-        return propostaRepository.findByDocumento(documento).isPresent();
-    }
 
     public void atualizaEstado(RestricaoAnalise restricaoAnalise, PropostaRepository repository) {
         this.estadoProposta =

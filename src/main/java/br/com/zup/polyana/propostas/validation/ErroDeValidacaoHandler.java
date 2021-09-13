@@ -1,87 +1,141 @@
 package br.com.zup.polyana.propostas.validation;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @RestControllerAdvice
 public class ErroDeValidacaoHandler {
 
-	private MessageSource messageSource;
-
-	public ErroDeValidacaoHandler(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
-	private static final Logger log = LoggerFactory
-			.getLogger(ErroDeValidacaoHandler.class);
-
-
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ErroDeFormularioDTO handleValidationError(MethodArgumentNotValidException exception) {
-
-		List<ObjectError> globalErrors = exception.getBindingResult().getGlobalErrors();
-		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-
-		return buildValidationErrors(globalErrors,
-				fieldErrors);
-	}
-
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(BindException.class)
-	public ErroDeFormularioDTO handleValidationError(BindException exception) {
-
-		List<ObjectError> globalErrors = exception.getBindingResult().getGlobalErrors();
-		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-
-		return buildValidationErrors(globalErrors,
-				fieldErrors);
-	}
-
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ErroDeFormularioDTO handleValidationError(HttpMessageNotReadableException exception) {
-		log.error("Problema na de desserializar o objeto",exception);
-
-		InvalidFormatException invalidFormat = (InvalidFormatException) exception.getCause();
-
-		List<ObjectError> globalErrors = List.of(new ObjectError("", invalidFormat.getValue()+" não é um valor válido"));
-		List<FieldError> fieldErrors = List.of();
-
-		return buildValidationErrors(globalErrors,
-				fieldErrors);
-	}
-
-	private ErroDeFormularioDTO buildValidationErrors(List<ObjectError> globalErrors,
-                                                      List<FieldError> fieldErrors) {
-		ErroDeFormularioDTO validationErrors = new ErroDeFormularioDTO();
-
-		globalErrors.forEach(error -> validationErrors.addError(getErrorMessage(error)));
-
-		fieldErrors.forEach(error -> {
-			String errorMessage = getErrorMessage(error);
-			validationErrors.addFieldError(error.getField(), errorMessage);
+	public ResponseEntity<ErroPadronizado> handle(MethodArgumentNotValidException exception) {
+		Collection<String> mensagens = new ArrayList<>();
+		BindingResult bindingResult = exception.getBindingResult();
+		List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+		fieldErrors.forEach(fieldError -> {
+			String message = String.format("Campo %s %s", fieldError.getField(), fieldError.getDefaultMessage());
+			mensagens.add(message);
 		});
-		return validationErrors;
+
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
 	}
 
-	private String getErrorMessage(ObjectError error) {
-		return messageSource.getMessage(error, LocaleContextHolder.getLocale());
+	@ExceptionHandler(BindException.class)
+	public ResponseEntity<ErroPadronizado> handle(BindException exception) {
+		Collection<String> mensagens = new ArrayList<>();
+		BindingResult bindingResult = exception.getBindingResult();
+		List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+		fieldErrors.forEach(fieldError -> {
+			String message = String.format("Campo %s %s", fieldError.getField(), fieldError.getDefaultMessage());
+			mensagens.add(message);
+		});
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
 	}
 
+	@ExceptionHandler(ApiErrorException.class)
+	public ResponseEntity<ErroPadronizado> handleApiErroException(ApiErrorException apiErroException) {
+		Collection<String> mensagens = new ArrayList<>();
+		mensagens.add(apiErroException.getReason());
 
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(apiErroException.getHttpStatus()).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErroPadronizado> handle(IllegalStateException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format("Campo %s %s", exception.getLocalizedMessage(), "Formato de entrada de dados inválido");
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ErroPadronizado> handle(HttpMessageNotReadableException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format("Campo %s %s", exception.getLocalizedMessage(), "Corpo da requisição inválido");
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErroPadronizado> handle(IllegalArgumentException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format("Campo %s %s", exception.getLocalizedMessage());
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ErroPadronizado> handle(ConstraintViolationException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format("Campo %s %s", exception.getLocalizedMessage());
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<ErroPadronizado> handle(HttpRequestMethodNotSupportedException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format(exception.getLocalizedMessage());
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<ErroPadronizado> handle(MissingServletRequestParameterException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format("Campo %s ", exception.getLocalizedMessage());
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(MissingPathVariableException.class)
+	public ResponseEntity<ErroPadronizado> handle(MissingPathVariableException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format("Campo %s ", exception.getParameter().getParameter().getName() + " não foi enviado pela URL");
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(NullPointerException.class)
+	public ResponseEntity<ErroPadronizado> handle(NullPointerException exception){
+		Collection<String> mensagens = new ArrayList<>();
+		String message = String.format(exception.getMessage());
+		mensagens.add(message);
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroPadronizado);
+	}
+
+	@ExceptionHandler(ResponseStatusException.class)
+	public ResponseEntity<ErroPadronizado> handleResponseStatusException(ResponseStatusException responseStatusException) {
+		Collection<String> mensagens = new ArrayList<>();
+		mensagens.add(responseStatusException.getReason());
+
+		ErroPadronizado erroPadronizado = new ErroPadronizado(mensagens);
+		return ResponseEntity.status(responseStatusException.getStatus()).body(erroPadronizado);
+	}
 }

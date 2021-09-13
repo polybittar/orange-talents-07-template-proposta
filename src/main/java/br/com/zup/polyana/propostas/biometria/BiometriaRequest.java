@@ -2,9 +2,9 @@ package br.com.zup.polyana.propostas.biometria;
 
 import br.com.zup.polyana.propostas.cartao.Cartao;
 import br.com.zup.polyana.propostas.cartao.CartaoRepository;
+import br.com.zup.polyana.propostas.validation.ApiErrorException;
 import br.com.zup.polyana.propostas.validation.validator.Base64Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotBlank;
 
@@ -32,13 +32,13 @@ public class BiometriaRequest {
         Cartao cartao = cartaoRepository.findById(idCartao)
                 .orElseThrow(
 
-                        ()-> new ResponseStatusException(
+                        ()-> new ApiErrorException(
                                 HttpStatus.NOT_FOUND,
                                 "Cartão não encontrado.")
 
                 );
 
-        return new Biometria(this,cartao);
+        return new Biometria(this, cartao);
     }
 
 }

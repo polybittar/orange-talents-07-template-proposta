@@ -1,5 +1,6 @@
 package br.com.zup.polyana.propostas.proposta;
 
+import br.com.zup.polyana.propostas.proposta.criptografia.CriptografaDocumento;
 import br.com.zup.polyana.propostas.validation.validator.CPFOrCNPJ;
 
 import javax.validation.constraints.Email;
@@ -59,6 +60,6 @@ public class PropostaRequest {
     }
 
     public Proposta converter(EstadoProposta estadoProposta) {
-        return new Proposta(documento, email, nome, endereco, salario, estadoProposta);
+        return new Proposta(CriptografaDocumento.encode(documento), email, nome, endereco, salario, estadoProposta);
     }
 }

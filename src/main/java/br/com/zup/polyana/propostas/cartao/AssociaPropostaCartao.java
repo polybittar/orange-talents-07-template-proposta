@@ -3,6 +3,7 @@ package br.com.zup.polyana.propostas.cartao;
 import br.com.zup.polyana.propostas.proposta.EstadoProposta;
 import br.com.zup.polyana.propostas.proposta.Proposta;
 import br.com.zup.polyana.propostas.proposta.PropostaRepository;
+import br.com.zup.polyana.propostas.validation.ApiErrorException;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class AssociaPropostaCartao {
 
             } catch (FeignException e) {
                 logger.info("Não foi possível associar o cartão à proposta");
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Não foi possível associar o cartão à proposta");
+                throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "Não foi possível associar o cartão à proposta");
             }
 
         });
