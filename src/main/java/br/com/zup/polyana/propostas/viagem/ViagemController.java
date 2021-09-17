@@ -64,6 +64,6 @@ public class ViagemController {
         Viagem avisoViagem = viagemRequest.converter(cartao, ipClient, userAgent);
         viagemRepository.save(avisoViagem);
 
-        return ResponseEntity.ok().body("Aviso de viagem efetuado");
+        return ResponseEntity.ok().build();
     }
 }

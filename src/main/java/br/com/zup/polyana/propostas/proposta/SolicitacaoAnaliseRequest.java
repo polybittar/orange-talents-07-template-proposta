@@ -1,5 +1,6 @@
 package br.com.zup.polyana.propostas.proposta;
 
+import br.com.zup.polyana.propostas.proposta.criptografia.CriptografaDocumento;
 import br.com.zup.polyana.propostas.validation.validator.CPFOrCNPJ;
 
 import javax.validation.constraints.NotBlank;
@@ -21,14 +22,8 @@ public class SolicitacaoAnaliseRequest {
 
     }
 
-    public SolicitacaoAnaliseRequest(String nome, String documento, Long idProposta) {
-        this.nome = nome;
-        this.documento = documento;
-        this.idProposta = idProposta;
-    }
-
     public SolicitacaoAnaliseRequest(Proposta proposta) {
-        this.documento = proposta.getDocumento();
+        this.documento = CriptografaDocumento.decode(proposta.getDocumento());
         this.nome = proposta.getNome();
         this.idProposta = proposta.getId();
     }

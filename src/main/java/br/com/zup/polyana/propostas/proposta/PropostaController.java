@@ -77,8 +77,8 @@ public class PropostaController {
                 .body(uri);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/api/proposta/{id}")
     @Transactional
+    @RequestMapping(method = RequestMethod.GET, value = "/api/proposta/{id}")
     public ResponseEntity<?> consultar(@PathVariable String id) {
 
         Optional<Proposta> propostaObject = propostaRepository.findByIdProposta(id);

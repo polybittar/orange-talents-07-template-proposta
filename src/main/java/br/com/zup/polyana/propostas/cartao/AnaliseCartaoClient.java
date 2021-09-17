@@ -12,17 +12,19 @@ import java.util.Map;
 @FeignClient(value = "cartao", url = "${cartoes.host}")
 public interface AnaliseCartaoClient {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod .GET)
     AnaliseCartaoResponse buscaAnaliseCartao(@RequestBody @RequestParam(required = true,name = "idProposta") String idProposta);
 
     @RequestMapping(method = RequestMethod.POST, value = "/{idCartao}/bloqueios", consumes = "application/json")
-    String bloqueiaCartao(@RequestParam(required = true,name = "idCartao") String idCartao, @RequestBody Map<String,String> sistema);
+    String bloqueiaCartao(@RequestParam(required = true,name = "idCartao") String idCartao,
+                          @RequestBody Map<String,String> sistema);
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", value = "/{idCartao}/avisos")
-    ViagemResponse avisoViagemCartao(@PathVariable("idCartao") String idCartao, @RequestBody ViagemRequest avisoViagemRequest);
+    ViagemResponse avisoViagemCartao(@RequestParam(required = true,name = "idCartao") String idCartao,
+                                     @RequestBody ViagemRequest avisoViagemRequest);
 
     @RequestMapping(method = RequestMethod.POST,consumes = "application/json",value = "/{idCartao}/carteiras")
-    CarteiraResponse associaCarteiraDigital(@RequestParam(required = true) String idCartao,
+    CarteiraResponse associaCarteiraDigital(@RequestParam(required = true, name = "idCartao") String idCartao,
                                             @RequestBody CarteiraRequest carteiraRequest);
 
 }

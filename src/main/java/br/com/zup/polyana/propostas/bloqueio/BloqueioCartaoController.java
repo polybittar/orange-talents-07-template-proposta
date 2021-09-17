@@ -56,9 +56,8 @@ public class BloqueioCartaoController {
             throw new ApiErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível realizar o bloqueio");
         }
 
-        analiseCartaoClient.bloqueiaCartao(cartao.getNumero(), Map.of("sistemaResponsavel", "propostas"));
         cartaoRepository.save(cartao);
 
-        return ResponseEntity.ok().body("Cartão bloqueado:" + bloqueioCartao.getId());
+        return ResponseEntity.ok().build();
     }
 }

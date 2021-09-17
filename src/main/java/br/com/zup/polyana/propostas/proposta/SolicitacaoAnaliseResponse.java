@@ -6,10 +6,8 @@ public class SolicitacaoAnaliseResponse {
 
     private String documento;
     private String nome;
-
     @Enumerated
     private RestricaoAnalise resultadoSolicitacao;
-
     private Long idProposta;
 
 

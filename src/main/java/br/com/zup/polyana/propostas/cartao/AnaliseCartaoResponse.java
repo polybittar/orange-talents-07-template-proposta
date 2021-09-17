@@ -17,6 +17,11 @@ public class AnaliseCartaoResponse {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
     public Cartao converter() {
         return new Cartao(this.id);
     }
